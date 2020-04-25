@@ -25,4 +25,4 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 
 ## Higlights
 
-Jenny as a programming language is focused on data strucure design and metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a graph-shaped database of parsed AST trees togather with embedded data structures.  
+Jenny as a programming language is focused on data strucure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a graph-shaped database of parsed AST trees together with associated embedded data structures (annotation metadata, i18n databases etc). 

@@ -14,8 +14,7 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 1. Native Fibers and Coroutines for high-performance IO.
 1. Native integration with Memoria runtime (high-performance AIO subsystem, custom memory management), Linked Data model, containers and stores.
 1. [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming) and Contracts. The more formal semantics is made explicit, the better for refactoring.
-1. Safe (UB-free + memory protection) language subset (by default) for general-purpose applications development.
-1. Full memory access mode to hack the existance.
+1. Language profiles to enable/disable certail language features: Safe (UB-free + memory protection) language subset (by default) for general-purpose applications development, Full profile for ninjas, AOT-only profile, JIT-requiring profile, etc.
 1. Metaprogramming-aware refactoring tools. Code is alive while it can continously evolve.
 1. Clang parser integration for interoperability with C++.
 1. Versioned (Git-like) Memoria store (in-memory, on-disk) as a physical program structure (instead of a bunch of a plain text files). Code and embedded data are in the same place, reachable with transpiler and refactoring tools.
@@ -31,3 +30,13 @@ Jenny, as a programming language, is focused on data strucure design and code-as
 Jenny is not a compiler, its a source-to-source transpiler producing C++ code as an output (together with other artifacts like Protobuf interfaces and SWIG bindings), either for direct compilation into an executable or a C++ library module to use with other C++ applications. Jenny is not a competition or replacement for C++, but a *legacy-free* modernization for better productivity. The language will be co-evolving with C++, stacking on top of its semantics and a huge set of libraries. Codebase matters and C++ has it. 
 
 The transpiler will be developing using service-oriented cloud-friendly asynchronous data-flow model, with public API and interactive Web interfaces. Classical file-in/file-out command-line mode will also be provided for integration with existing build tools. Currently, Memoria provides only in-memory and on-disk (single-machine) storage options, but this is more than enough for typical use case of such transpiler. Interested integrators can implement cloud-native storage option for Memoria for themselves and reimplement the transpiler at the scale of the Cloud.
+
+## Using Memoria for Code Model
+
+Memoria is a C++ metaprogramming framework for general-purpose persistent data structures on top of key-value memory model. There are two basic complex data "formats":
+* B-Tree based dynamic versioned data *containers* and
+* Pointer-based LinkedData *documents* allocated compactly in arenas with predictable binary data layout.
+
+Containers are versioned and may have arbitrary size. Documents have value semantics and can be stores as data values in containers. They may also have arbitrary binary data size, but optimized to be small. LinkedData documents are similar to JSON, but unlike the latter, the former support much more data types natively, besides strings, numbers, maps and arrays. LinkedData documents are immidiately quaryable, no data type conversion is necessary for processing. They are nearly ideal storage format for parsed abstract syntax trees.
+
+

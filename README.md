@@ -20,14 +20,14 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 1. Clang parser integration for interoperability with C++.
 1. Versioned (Git-like) Memoria store (in-memory, on-disk) as a physical program structure (instead of a bunch of a plain text files). Code and embedded data are in the same place, reachable with transpiler and refactoring tools.
 1. IDE-friendly event-driven dataflow-based transpiler architecture.
-1. Embedded HTTP server providing native RESTful API for transpiler, refactoring tools, code and data.
+1. Embedded HTTP server providing native RESTful API for transpiler, refactoring tools, interactive autocompletion, code and data (language server).
 1. Basic Web application for code and data navigation and editing, using the tranpiler's REST API.
-1. Infrastructure-aware transpiler/refactoring. Want to split your monolith into microservices or vice versa? Jenny can do it!
+1. Infrastructure-aware transpiler/refactoring. Want to split your monolith into well-sized services or vice versa? Jenny will do it for you!
 
-## Higlights
+## Highlights
 
-Jenny, as a programming language, is focused on data strucure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a versioned multimodel database of parsed abstract syntax trees for Jenny and embedded DSLs together with associated embedded data structures (annotation metadata, i18n databases etc). The database is dynamically updatable and optimized for analythics, with [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) and branching semantics. Structured data representation makes code analytics much simpler and faster. More on this later.
+Jenny, as a programming language, is focused on data strucure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a versioned multimodel database of parsed abstract syntax trees for Jenny and embedded DSLs, together with associated embedded data structures (annotation metadata, i18n databases etc). The database is dynamically updatable and optimized for analythics, with [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) and branching semantics. Structured data representation makes code analytics much simpler and faster. More on this later.
 
-Jenny is not a compiler, its a source-to-source transpiler making C++ code as an output (together with other artifacts like Protobuf interfaces and SWIG bindings), either for direct compilation to an executable or as a C++ library module to use with other C++ applications. Jenny is not a competion or replacement for C++, but a legacy-free modernization for better productivity. The laguage will be co-evolving with C++.
+Jenny is not a compiler, its a source-to-source transpiler producing C++ code as an output (together with other artifacts like Protobuf interfaces and SWIG bindings), either for direct compilation into an executable or a C++ library module to use with other C++ applications. Jenny is not a competition or replacement for C++, but a *legacy-free* modernization for better productivity. The language will be co-evolving with C++, stacking on top of its semantics and a huge set of libraries. Codebase matters and C++ has it. 
 
-
+The transpiler will be developing using service-oriented cloud-friendly asynchronous data-flow model, with public API and interactive Web interfaces. Classical file-in/file-out command-line mode will also be provided for integration with existing build tools. Currently, Memoria provides only in-memory and on-disk (single-machine) storage options, but this is more than enough for typical use case of such transpiler. Interested integrators can implement cloud-native storage option for Memoria for themselves and reimplement the transpiler at the scale of the Cloud.

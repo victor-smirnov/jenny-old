@@ -1,5 +1,5 @@
 # Jenny
-Jenny is an experimental opinionated programming language and metaprogramming [transpiler](https://en.wikipedia.org/wiki/Source-to-source_compiler) on top of and for C++ and [Memoria](https://bitbucket.org/vsmirnov/memoria/wiki/Home)
+Jenny is an experimental opinionated imperative statically typed programming language and metaprogramming [transpiler](https://en.wikipedia.org/wiki/Source-to-source_compiler) on top of and for C++ and [Memoria](https://bitbucket.org/vsmirnov/memoria/wiki/Home)
 
 ## Rationale
 C++ has some painful points which are very hard to fix given the necessity to maintain compatibility with existing codebase. Jenny is a new language with the spirit of C++ (low level, zero-cost abstractions) but without its ancient legacy from 1980th. Simple things should be simple. But complex things should be simple too and only [advanced metaprogramming](https://en.wikipedia.org/wiki/Metaclass) will save us from a curse of descriptional complexity. What we definitely don't need is a new language competing with C++ that is not compatible with its existing codebase. Jenny will be able to use most of existing C++ libraries with minimal efforts. And some Jenny programs can be exported as C++ modules to use with C++ applications. So folks currently heavily investing in C++ should continue doing this. Jenny objects are C++ objects and vice versa, no bridging is necessary.
@@ -21,8 +21,13 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 1. Versioned (Git-like) Memoria store (in-memory, on-disk) as a physical program structure (instead of a bunch of a plain text files). Code and embedded data are in the same place, reachable with transpiler and refactoring tools.
 1. IDE-friendly event-driven dataflow-based transpiler architecture.
 1. Embedded HTTP server providing native RESTful API for transpiler, refactoring tools, code and data.
-1. Infrastructure-aware transpiler/refactoring. Want to split your monolith into microservices or vice versa? We can it!
+1. Basic Web application for code and data navigation and editing, using the tranpiler's REST API.
+1. Infrastructure-aware transpiler/refactoring. Want to split your monolith into microservices or vice versa? Jenny can do it!
 
 ## Higlights
 
-Jenny as a programming language is focused on data strucure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a graph-shaped database of parsed AST trees together with associated embedded data structures (annotation metadata, i18n databases etc). 
+Jenny, as a programming language, is focused on data strucure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a versioned multimodel database of parsed abstract syntax trees for Jenny and embedded DSLs together with associated embedded data structures (annotation metadata, i18n databases etc). The database is dynamically updatable and optimized for analythics, with [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) and branching semantics. Structured data representation makes code analytics much simpler and faster. More on this later.
+
+Jenny is not a compiler, its a source-to-source transpiler making C++ code as an output (together with other artifacts like Protobuf interfaces and SWIG bindings), either for direct compilation to an executable or as a C++ library module to use with other C++ applications. Jenny is not a competion or replacement for C++, but a legacy-free modernization for better productivity. The laguage will be co-evolving with C++.
+
+

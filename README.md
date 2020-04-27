@@ -12,6 +12,7 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 1. Metaclasses and metaobjects. Compile-time AST-level metaprogramming (in large).
 1. Lifetimes. Like Rust's borrwing sematics but much more flexible.
 1. Native Fibers and Coroutines for high-performance IO.
+1. Native language support for Tuples, Variants and Pattern Matching.
 1. Native integration with Memoria runtime (high-performance AIO subsystem, custom memory management), Linked Data model, containers and stores.
 1. [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming) and Contracts. The more formal semantics is made explicit, the better for refactoring.
 1. Language profiles to enable/disable certail language features: Safe (UB-free + memory protection) language subset (by default) for general-purpose applications development, Full profile for ninjas, AOT-only profile, JIT-requiring profile, etc.

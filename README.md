@@ -1,8 +1,8 @@
 # Jenny
-Jenny is an experimental opinionated imperative statically typed programming language and metaprogramming [transpiler](https://en.wikipedia.org/wiki/Source-to-source_compiler) on top of and for C++ and [Memoria](https://bitbucket.org/vsmirnov/memoria/wiki/Home)
+Jenny is an experimental opinionated imperative statically typed programming language and metaprogramming [transpiler](https://en.wikipedia.org/wiki/Source-to-source_compiler) on top of and for C++ and [Memoria](https://bitbucket.org/vsmirnov/memoria/wiki/Home). Currently, this project is meant to be mostly a showcase for Memoria framework.
 
 ## Rationale
-C++ has some painful points which are very hard to fix given the necessity to maintain compatibility with existing codebase. Jenny is a new language with the spirit of C++ (low level, zero-cost abstractions) but without its ancient legacy from 1980th. Simple things should be simple. But complex things should be simple too and only [advanced metaprogramming](https://en.wikipedia.org/wiki/Metaclass) will save us from a curse of descriptional complexity. What we definitely don't need is a new language competing with C++ that is not compatible with its existing codebase. Jenny will be able to use most of existing C++ libraries with minimal efforts. And some Jenny programs can be exported as C++ modules to use with C++ applications. So folks currently heavily investing in C++ should continue doing this. Jenny objects are C++ objects and vice versa, no bridging is necessary.
+C++ has some painful points which are very hard to fix given the necessity to maintain compatibility with existing codebase. Jenny is a new language with the spirit of C++ (low level, zero-cost abstractions) but without its ancient legacy from 1980ths. Simple things should be simple. But complex things should be simple too and only [advanced metaprogramming](https://en.wikipedia.org/wiki/Metaclass) will save us from a curse of descriptional complexity. What we definitely don't need is a new language competing with C++ that is not compatible with its existing codebase. Jenny will be able to use most of existing C++ libraries with minimal efforts. And some Jenny programs can be exported as C++ modules to use with C++ applications. So folks currently heavily investing in C++ should continue doing this. Jenny objects are C++ objects and vice versa, no bridging is necessary.
 
 ## Core Features
 
@@ -16,6 +16,8 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 1. [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming) and Contracts. The more formal semantics is made explicit, the better for refactoring.
 1. Language profiles to enable/disable certail language features: Safe (UB-free + memory protection) language subset (by default) for general-purpose applications development, Full profile for ninjas, AOT-only profile, JIT-requiring profile, etc.
 1. Metaprogramming-aware refactoring tools. Code is alive while it can continously evolve.
+1. Modules.
+1. Integrated package manager.
 1. Clang parser integration for interoperability with C++.
 1. Versioned (Git-like) Memoria store (in-memory, on-disk) as a physical program structure (instead of a bunch of a plain text files). Code and embedded data are in the same place, reachable with transpiler and refactoring tools.
 1. IDE-friendly event-driven dataflow-based transpiler architecture.
@@ -33,10 +35,12 @@ The transpiler will be developing using service-oriented cloud-friendly asynchro
 
 ## Using Memoria for Code Model
 
-Memoria is a C++ metaprogramming framework for general-purpose persistent data structures on top of key-value memory model. There are two basic complex data "formats":
-* B-Tree based dynamic versioned data *containers* and
+Memoria is a C++ metaprogramming framework for general-purpose copy-on-write based [persistent data structures](https://en.wikipedia.org/wiki/Persistent_data_structure) on top of key-value memory model. There are two basic complex data "formats":
+* B-Tree-based dynamic versioned data *containers* and
 * Pointer-based LinkedData *documents* allocated compactly in arenas with predictable binary data layout.
 
 Containers are versioned and may have arbitrary size. Documents have value semantics and can be stores as data values in containers. They may also have arbitrary binary data size, but optimized to be small. LinkedData documents are similar to JSON, but unlike the latter, the former support much more data types natively, besides strings, numbers, maps and arrays. LinkedData documents are immidiately quaryable, no data type conversion is necessary for processing. They are nearly ideal storage format for parsed abstract syntax trees.
+
+Vesioning in Memoria is similar to (D)VCS. Containers can be updated, and updates are grouped to snapshots. Once a snapshot is committed, it becames immutable. All futher updates will require creating a new version. Different versions can be merged by moving updates from one version to another. The main difference from Git and other DVCS of this kind is that *all versions are matherialized and available for reading simultaneously*. No "checkouting" is necessary. This allows enabling cross-version source code analysis techniques. Because of [snapshot isolation](https://en.wikipedia.org/wiki/Snapshot_isolation) code analysiers can be run as long as they need, incoming incremental updates do not affect the code thay are curently operating with. Moreover, writers do not affect readers in any way. Once snapshot reference is obtained from the version history, all further data access is mostly lockless (modulo short-term locks in cache and the OS kernel). 
 
 

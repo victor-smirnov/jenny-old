@@ -45,4 +45,7 @@ Vesioning in Memoria is similar to (D)VCS. Containers can be updated, and update
 
 But such powerful functionality comes with cost. Like in many DVCS, versions in Memoria are stored as a difference between current and "parent" versions. But this difference is stored as a set ob updated blocks (i.e. materialized form of update), which are typically of the size between 4KB and 1MB. Because of that, versions in Memoria are much larger than versions in DVCS. Fortunately, for typical Jenny's usecases (large code bases) storage space is not an issue. Compiled artifacts (object code, intermediate files etc) require way more storage space than source codes.
 
-Jenny's *Code Model* is a set of spcialized Memoria containers, LinkedData types, domain-specific query languages and related logic implementing transpiler workflow.
+Jenny's *Code Model* is a set of spcialized Memoria containers, LinkedData types, domain-specific query languages and related logic implementing transpiler workflow, parsing ASTs for Jenny, C++ and various embedded DSLs, synchronization with other (remote) repositories, various auxiliary functions and data types supporting code analysers and refactoring. 
+
+## Roadmap
+TBD

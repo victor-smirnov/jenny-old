@@ -10,25 +10,25 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 1. Native [SDN](https://bitbucket.org/vsmirnov/memoria/wiki/String%20Data%20Notation) integration for in-code embedded data structures and DSLs.
 1. Type-level metaprogramming in large. Like C++ templates but with human-friendly syntax and debugging support.
 1. Metaclasses and metaobjects. Compile-time AST-level metaprogramming (in large).
-1. Lifetimes. Like Rust's borrwing sematics but much more flexible.
+1. Lifetimes. Like Rust's borrowing semantics but much more flexible.
 1. Native Fibers and Coroutines for high-performance IO.
 1. Native language support for Tuples, Variants and Pattern Matching.
 1. Native integration with Memoria runtime (high-performance AIO subsystem, custom memory management), Linked Data model, containers and stores.
 1. [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming) and Contracts. The more formal semantics is made explicit, the better for refactoring.
-1. Language profiles to enable/disable certail language features: Safe (UB-free + memory protection) language subset (by default) for general-purpose applications development, Full profile for ninjas, AOT-only profile, JIT-requiring profile, etc.
-1. Metaprogramming-aware refactoring tools. Code is alive while it can continously evolve.
+1. Language profiles to enable/disable certain language features: Safe (UB-free + memory protection) language subset (by default) for general-purpose applications development, Full profile for ninjas, AOT-only profile, JIT-requiring profile, etc.
+1. Metaprogramming-aware refactoring tools. Code is alive while it can continuously evolve.
 1. Modules.
 1. Integrated package manager.
 1. Clang parser integration for interoperability with C++.
 1. Versioned (DVCS-like) Memoria store (in-memory, on-disk) as a physical program structure (instead of a bunch of a plain text files). Code and embedded data are in the same place, reachable with transpiler and refactoring tools.
 1. IDE-friendly event-driven dataflow-based transpiler architecture.
-1. Embedded HTTP server providing native RESTful API for transpiler, refactoring tools, interactive autocompletion, code and data (language server).
-1. Basic Web application for code and data navigation and editing, using the tranpiler's REST API.
+1. Embedded HTTP server providing native RESTful API for transpiler, refactoring tools, interactive auto-completion, code and data (language server).
+1. Basic Web application for code and data navigation and editing, using the transpiler's REST API.
 1. Infrastructure-aware transpiler/refactoring. Want to split your monolith into well-sized services or vice versa? Jenny will do it for you!
 
 ## Highlights
 
-Jenny, as a programming language, is focused on data strucure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a versioned multimodel database of parsed abstract syntax trees for Jenny and embedded DSLs, together with associated embedded data structures (annotation metadata, i18n databases etc). The database is dynamically updatable and optimized for analythics, with [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) and branching semantics. Structured data representation makes code analytics much simpler and faster. More on this later.
+Jenny, as a programming language, is focused on data structure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a versioned multimodel database of parsed abstract syntax trees for Jenny and embedded DSLs, together with associated embedded data structures (annotation metadata, i18n databases etc). The database is dynamically updatable and optimized for analytics, with [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) and branching semantics. Structured data representation makes code analytics much simpler and faster. More on this later.
 
 Jenny is not a compiler, its a source-to-source transpiler producing C++ code as an output (together with other artifacts like Protobuf interfaces and SWIG bindings), either for direct compilation into an executable or a C++ library module to use with other C++ applications. Jenny is not a competition or replacement for C++, but a *legacy-free* modernization for better productivity. The language will be co-evolving with C++, stacking on top of its semantics and a huge set of libraries. Codebase matters and C++ has it. 
 
@@ -40,13 +40,13 @@ Memoria is a C++ metaprogramming framework for general-purpose copy-on-write bas
 * B-Tree-based dynamic versioned data *containers* and
 * Pointer-based LinkedData *documents* allocated compactly in arenas with predictable binary data layout.
 
-Containers are versioned and may have arbitrary size. Documents have value semantics and can be stores as data values in containers. They may also have arbitrary binary data size, but optimized to be small. LinkedData documents are similar to JSON, but unlike the latter, the former support much more data types natively, besides strings, numbers, maps and arrays. LinkedData documents are immidiately quaryable, no data type conversion is necessary for processing. They are nearly ideal storage format for parsed abstract syntax trees.
+Containers are versioned and may have arbitrary size. Documents have value semantics and can be stores as data values in containers. They may also have arbitrary binary data size, but optimized to be small. LinkedData documents are similar to JSON, but unlike the latter, the former support much more data types natively, besides strings, numbers, maps and arrays. LinkedData documents are immediately quaryable, no data type conversion is necessary for processing. They are nearly ideal storage format for parsed abstract syntax trees.
 
-Vesioning in Memoria is similar to (D)VCS. Containers can be updated, and updates are grouped to snapshots (commits). Once a snapshot is committed, it becames immutable. All futher updates will require creating a new version. Different versions can be merged by moving specific updates from existing versions to a new one. The main difference from DVCS is that *all versions are matherialized and available for reading simultaneously*. No "checkouting" is necessary. This enables various cross-version source code analysis techniques. Because of [snapshot isolation](https://en.wikipedia.org/wiki/Snapshot_isolation), code analyzers can be run as long as they need, incoming incremental updates do not affect the code they are curently operating with. Moreover, writers do not affect readers in any way. Once snapshot reference is obtained from the version history, all further data access is mostly lockless (modulo short-term locks in a cache and in the OS kernel). 
+Versioning in Memoria is similar to (D)VCS. Containers can be updated, and updates are grouped to snapshots (commits). Once a snapshot is committed, it became immutable. All further updates will require creating a new version. Different versions can be merged by moving specific updates from existing versions to a new one. The main difference from DVCS is that *all versions are materialized and available for reading simultaneously*. No "checkouting" is necessary. This enables various cross-version source code analysis techniques. Because of [snapshot isolation](https://en.wikipedia.org/wiki/Snapshot_isolation), code analyzers can be run as long as they need, incoming incremental updates do not affect the code they are currently operating with. Moreover, writers do not affect readers in any way. Once snapshot reference is obtained from the version history, all further data access is mostly lockless (modulo short-term locks in a cache and in the OS kernel). 
 
 But such powerful functionality comes with cost. Like in many DVCS, versions in Memoria are stored as a difference between current and "parent" versions. But this difference is stored as a set ob updated blocks (i.e. materialized form of update), which are typically of the size between 4KB and 1MB. Because of that, versions in Memoria are much larger than versions in DVCS. Fortunately, for typical Jenny's usecases (large code bases) storage space is not an issue. Compiled artifacts (object code, intermediate files etc) require way more storage space than source codes.
 
-Jenny's *Code Model* is a set of spcialized Memoria containers, LinkedData types, domain-specific query languages and related logic implementing transpiler workflow, parsing ASTs for Jenny, C++ and various embedded DSLs, synchronization with other (remote) repositories, various auxiliary functions and data types supporting code analysers and refactoring. 
+Jenny's *Code Model* is a set of specialized Memoria containers, LinkedData types, domain-specific query languages and related logic implementing transpiler workflow, parsing ASTs for Jenny, C++ and various embedded DSLs, synchronization with other (remote) repositories, various auxiliary functions and data types supporting code analyzers and refactoring. 
 
 ## Roadmap
 TBD

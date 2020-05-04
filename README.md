@@ -2,7 +2,7 @@
 Jenny is an experimental [opinionated](https://github.com/victor-smirnov/digital-philosophy) imperative statically typed programming language and metaprogramming [transpiler](https://en.wikipedia.org/wiki/Source-to-source_compiler) on top of and for C++ and [Memoria](https://bitbucket.org/vsmirnov/memoria/wiki/Home). Currently, this project is meant to be mostly a showcase for Memoria framework.
 
 ## Rationale
-C++ has some painful points which are very hard to fix given the necessity to maintain compatibility with existing codebase. Jenny is a new language with the spirit of C++ (low level, zero-cost abstractions) but without its ancient legacy from 1980ths. Simple things should be simple. But complex things should be simple too and only [advanced metaprogramming](https://en.wikipedia.org/wiki/Metaclass) will save us from a curse of descriptional complexity. What we definitely don't need is a new language competing with C++ that is not compatible with its existing codebase. Jenny will be able to use most of existing C++ libraries with minimal efforts. And some Jenny programs can be exported as C++ projects to be used with C++ applications. So folks currently heavily investing in C++ should continue doing this. Jenny objects are C++ objects and vice versa, no bridging is necessary.
+C++ has some painful points which are very hard to fix given the necessity to maintain compatibility with existing codebase. Jenny is a new language with the spirit of C++ (low level, zero-cost abstractions) but without its ancient legacy from 1980ths. Simple things should be simple. But complex things should be simple too and only [advanced metaprogramming](https://en.wikipedia.org/wiki/Metaclass) will save us from a curse of descriptional complexity. What we definitely don't need is a new language competing with C++ that is not compatible with its existing codebase. Jenny will be able to use most of existing C++ libraries with minimal efforts. And some Jenny programs can be exported as C++ projects to be used with C++ applications at the source level, including template metaprogramming. So folks currently heavily investing in C++ should continue doing this. Jenny objects are C++ objects and vice versa, no bridging is necessary.
 
 ## Core Features
 
@@ -28,11 +28,49 @@ C++ has some painful points which are very hard to fix given the necessity to ma
 
 ## Highlights
 
-Jenny, as a programming language, is focused on data structure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a versioned multimodel database of parsed abstract syntax trees for Jenny and embedded DSLs, together with associated embedded data structures (annotation metadata, i18n databases etc). The database is dynamically updatable and optimized for analytics, with [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) and branching semantics. Structured data representation makes code analytics much simpler and faster. More on this later.
+Jenny, as a programming language, is focused on data structure design and code-as-data metaprogramming. Though every program can be written in a classical textual form, physical Jenny program structure is a versioned multimodel database of parsed abstract syntax trees for Jenny and embedded DSLs, together with associated embedded data structures (annotation metadata, documentation, i18n databases, type traits, etc). The database is dynamically updatable and optimized for analytics, with [MVCC](https://en.wikipedia.org/wiki/Multiversion_concurrency_control) and branching semantics. Structured data representation makes code analytics much simpler and faster. More on this later.
 
 Jenny is not a compiler, its a source-to-source transpiler producing C++ code as an output (together with other artifacts like Protobuf interfaces and SWIG bindings), either for direct compilation into an executable or a C++ library module to use with other C++ applications. Jenny is not a competition or replacement for C++, but a *legacy-free* modernization for better productivity. The language will be co-evolving with C++, stacking on top of its semantics and a huge set of libraries. Codebase matters and C++ has it. 
 
 The transpiler will be developing using service-oriented cloud-friendly asynchronous data-flow model, with public API and interactive Web interfaces. Classical file-in/file-out command-line mode will also be provided for integration with existing build tools. Currently, Memoria provides only in-memory and on-disk (single-machine) storage options, but this is more than enough for typical use case of such transpiler. Interested integrators can implement cloud-native storage option for Memoria for themselves and reimplement the transpiler at the scale of the Cloud.
+
+## Metaprogramming in Jenny
+
+Jenny is based on a (pretty large) subset of C++20 syntax with multiple extensions to support core features like pattern matching, fibers and coroutines, metaclasses and metafunctions, annotations, embedded SDN, and so on. The main difference is that together with template metaprogramming and compile-time computations via *constexpr* functions, there are dedicated type-level and ast-level *metafunctions*. They look and feel like normal functions but invoked by the tranpiler at the compile time and consume types as value objects and produce types and AST framgments as value objects. Something like that:
+
+```c++
+// Some template
+template <int... Values> struct IntList {};
+
+// The metafunction. Annotetion informs the transpiler that this function 
+// will be used to create types at copile time.
+@Metafunction
+Type CreateIntListType(int size) 
+{
+  // Here metaprogramming goes. We are creating the type from template
+  // by specifing its prameters. Both types and templates are regular
+  // objects here. 
+  Template tpl(IntList);
+  auto builder = tpl.builder();
+  for (int c = 0; c < size; c++)
+  {
+    builder.addValue(c);
+  }
+  
+  return builder.build();
+}
+
+// Declaring a type using metafunction. Will be invoked at compile time.
+using IntListOf10 = CreateIntList(10);
+```
+
+Populating the IntList template with a sequence of numbers can be easily done with good old template metaprograms, and Jenny will be supporting the most of current template metaprogramming (TMP) out of the box. So, C++ libraries like Boost Hana should work pretty well in Jenny programs (modulo, possibly, preprocessor metaprogramming). But this way of building types [does not scale](https://en.wikipedia.org/wiki/Turing_tarpit) beyond simple cases:
+1. Debugging support to template metaprograms is fairly limited.
+1. Only linked-list based data structures are possible, so any access operation is O(N).
+1. The size of such data structures is pretty small.
+1. It's very hard to enforce any schema on TMP-based arbitrary data structures. Concepts to the rescue but we need much more scalability. 
+
+Classical TMP in Jenny is possible, it's not deprecated, but recommended only for simple, immediately obvious and convenient cases. Everything non-trivial is encouraged to use metafunctions.
 
 ## Using Memoria for Code Model
 

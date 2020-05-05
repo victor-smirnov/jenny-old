@@ -76,6 +76,8 @@ Metafunctions are executed at compile time. In his way, they are somewhat simila
 
 It may seems highly unreasonable why a metaprogram needs to read an arbitrary file? For example, for type metadata (type traits), when the structure of traits [goes beyond simple key/value model](https://github.com/victor-smirnov/memoria/blob/master/include/memoria/core/datatypes/traits.hpp). If type traits are hierarchically structured, it's higly error-prone to describe them as nested C++ type lists (via variadic templated). It doesn't scale beyond simple cases. Complex metadata should better be stored in the more suitable formats for that, like templatized [SDN](https://bitbucket.org/vsmirnov/memoria/wiki/String%20Data%20Notation) documents.
 
+Another use case may be from web development. [JSX](https://www.w3schools.com/react/react_jsx.asp) is an example of DSL merging fluently imperative JavaScript code and declarative HTML fragments. Today C++ is defenitely not a web developer's choice, but Jenny may have a chance, because it can integrate many different resources into a consistent logical model of the application.
+
 
 
 ## Using Memoria for Code Model

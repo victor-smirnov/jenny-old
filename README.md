@@ -72,6 +72,12 @@ Populating the IntList template with a sequence of numbers can be easily done wi
 
 Classical TMP in Jenny is possible, it's not deprecated, but recommended only for simple, immediately obvious and convenient cases. Everything non-trivial is encouraged to use metafunctions.
 
+Metafunctions are executed at compile time. In his way, they are somewhat similar to constexpr functions, but can use almost entire set of C++ lanuage feasures and most of the API. Metafunctions can read and write files, databases and network. They can create types by template instantialtions and any code by direct AST construction. Metafunctions are not limited with amount of data they can process. 
+
+It may seems highly unreasonable why a metaprogram needs to read an arbitrary file? For example, for type metadata (type traits), when the structure of traits [goes beyond simple key/value model](https://github.com/victor-smirnov/memoria/blob/master/include/memoria/core/datatypes/traits.hpp). If type traits are hierarchically structured, it's higly error-prone to describe them as nested C++ type lists (via variadic templated). It doesn't scale beyond simple cases. Complex metadata should better be stored in the more suitable formats for that, like templatized [SDN](https://bitbucket.org/vsmirnov/memoria/wiki/String%20Data%20Notation) documents.
+
+
+
 ## Using Memoria for Code Model
 
 Memoria is a C++ metaprogramming framework for general-purpose copy-on-write based [persistent data structures](https://en.wikipedia.org/wiki/Persistent_data_structure) on top of key-value memory model. There are two basic complex data "formats":

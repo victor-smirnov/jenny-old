@@ -33,7 +33,7 @@ endif()
 
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    option(USE_ASAN "Compile with Address Sanitizer ON (Default with Debug build)" ON)
+    option(USE_ASAN "Compile with Address Sanitizer ON (Default with Debug build)" OFF)
 else()
     option(USE_ASAN "Compile with Address Sanitizer ON (Default with Debug build)" OFF)
 ENDIF()
@@ -65,20 +65,8 @@ add_definitions(-DMMA_ICU_CXX_NS=icu)
 
 if (BUILD_POSIX)
 
-    if (BUILD_EMIT_LLVM)
-        set (CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -flto -fuse-ld=lld -Wl,-save-temps")
-        add_definitions(-Wl,-save-temps -flto)
-    endif()
-
     add_definitions(-Wall -Wno-sign-compare -fPIC -DPIC -D_GNU_SOURCE -D_REENTRANT -Wno-unused-command-line-argument)
     add_definitions(-Wno-old-style-cast)
-
-    if (BUILD_MACOSX)
-        add_definitions(-DBOOST_STACKTRACE_USE_ADDR2LINE)
-    else()
-        #add_global_linker(-stdlib=libstdc++)
-        #add_global_linker(-static-libstdc++)
-    endif()
 
     add_definitions(-fstrict-aliasing -Wstrict-aliasing=2 -Wfatal-errors  -ftemplate-backtrace-limit=0)
     add_definitions(-Wno-comment -Wno-unknown-warning-option -Wunused-variable)
@@ -94,7 +82,7 @@ if (BUILD_POSIX)
     add_definitions(-pthread)
     
     if (USE_ASAN)
-        add_definitions(-fsanitize=address -DMEMORIA_USE_ASAN -DMEMORIA_USE_UCONTEXT)
+        add_definitions(-fsanitize=address -DJENNY_USE_ASAN -DJENNY_USE_UCONTEXT)
         add_global_linker(-fsanitize=address)
     endif()
     
@@ -158,6 +146,12 @@ link_libraries(absl::base absl::strings absl::hash absl::meta absl::time)
 find_package(fmt CONFIG REQUIRED)
 link_libraries(fmt::fmt fmt::fmt-header-only)
 
+find_package(Clang CONFIG REQUIRED)
+find_package(LLVM CONFIG REQUIRED)
+
+
 set_property (GLOBAL PROPERTY GLOBAL_SOURCES)
+
+
 
 add_subdirectory(src)

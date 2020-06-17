@@ -20,8 +20,6 @@ add_subdirectory(parser)
 
 get_property(GLOBAL_SRCS GLOBAL PROPERTY GLOBAL_SOURCES)
 
-
-
 get_property(GLOBAL_SRCS_CLASSIC GLOBAL PROPERTY GLOBAL_SOURCES_CLASSIC)
 add_library(JennyClassic STATIC ${GLOBAL_SRCS_CLASSIC})
 set_property(TARGET JennyClassic PROPERTY CXX_STANDARD ${JENNY_INTERNAL_CXX_STANDARD})
@@ -31,5 +29,5 @@ SET_TARGET_PROPERTIES(JennyClassic PROPERTIES LINK_FLAGS "${JENNY_LINK_FLAGS}")
 
 export(TARGETS JennyClassic FILE ${LIBRARY_OUTPUT_PATH}/JennyClassic.cmake)
 
-
+add_subdirectory(compiler)
 
